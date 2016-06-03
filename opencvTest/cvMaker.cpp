@@ -1,3 +1,4 @@
+
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <iostream>
@@ -14,9 +15,9 @@ using namespace std;
 const double rate = 0.018868;
 struct Data
 {
-	int minR, minC, maxR, maxC, length,centerR,centerC,order;
+	int minR, minC, maxR, maxC, length, centerR, centerC, order;
 	Data() {}
-	Data(int minr, int minc, int maxr, int maxc,int or)
+	Data(int minr, int minc, int maxr, int maxc, int or )
 	{
 		minR = minr;
 		minC = minc;
@@ -24,17 +25,17 @@ struct Data
 		maxC = maxc;
 		order = or ;
 		length = ((maxc - minc) + (maxr - minr)) / 2;
-		centerR = ( minr + maxr ) / 2;
+		centerR = (minr + maxr) / 2;
 		centerC = (minc + maxc) / 2;
 	}
 	void toString()
 	{
-		printf("%.2lf\n",length * rate);
+		printf("%.2lf\n", length * rate);
 	}
 	vector<pair<int, int>> Points; // first 为 row, second 为 col
 };
 
-int lc = 0, lr = 0, rc = 1280, rr = 1024,cnt_circle = 0;
+int lc = 0, lr = 0, rc = 1280, rr = 1024, cnt_circle = 0;
 double dia1 = 0, dia2 = 0, dia3 = 0, dia4 = 0;
 double all_devi1 = 0, all_devi2 = 0, all_devi3 = 0, all_devi4 = 0;
 Mat src;
@@ -46,7 +47,7 @@ stack<pair<int, int>> sta;
 vector<Data> result, make_circle;
 
 void init(); //初始化数据
-void make_name( int i); //产生图片的名字
+void make_name(int i); //产生图片的名字
 bool cmp(Data d1, Data d2); //对数据排序时的比较函数
 void create_contours(); //画轮廓图
 bool isStore(int minC, int minR, int maxC, int  maxR); //判断找到的圆是否合格
@@ -54,7 +55,7 @@ void find_adjacent(); //提取连通域
 void get_circle(); //
 void fit_circle(int k); //使用最小二乘法进行圆拟合
 void draw_circle(); //画圆
-double get_devi(double A,double B, double R,int k);
+double get_devi(double A, double B, double R, int k);
 
 int main(int argc, char** argv)
 {
@@ -75,13 +76,13 @@ int main(int argc, char** argv)
 	}
 	printf("平均数据:\n");
 	printf("灯孔1R:%.2lf", dia1 * rate / 4);
-	printf("偏差值:%.2lf\n", all_devi1/4);
+	printf("  偏差值:%.0lf\n", all_devi1 / 4);
 	printf("灯孔2R:%.2lf", dia2 * rate / 4);
-	printf("偏差值:%.2lf\n", all_devi2 / 4);
+	printf("  偏差值:%.0lf\n", all_devi2 / 4);
 	printf("灯柱R:%.2lf", dia3 * rate / 4);
-	printf("偏差值:%.2lf\n", all_devi3 / 4);
+	printf("  偏差值:%.0lf\n", all_devi3 / 4);
 	printf("外圈R:%.2lf", dia4 * rate / 4);
-	printf("偏差值:%.2lf\n", all_devi4 / 4);
+	printf("  偏差值:%.0lf\n", all_devi4 / 4);
 	fclose(stdout);
 	return(0);
 }
@@ -95,7 +96,7 @@ void init()
 {
 	cnt_circle = 0;
 	result.clear();
-	make_circle.clear(); 
+	make_circle.clear();
 	while (!sta.empty()) sta.pop();
 }
 
@@ -155,7 +156,7 @@ void find_adjacent()
 	cvtColor(S, mid, CV_BGR2GRAY);
 	threshold(mid, dst, 145, 255, THRESH_BINARY);
 
-	vector<pair<int,int>> tmpPoint;
+	vector<pair<int, int>> tmpPoint;
 
 	for (int r = lr; r < rr; r++)
 	{
@@ -167,7 +168,7 @@ void find_adjacent()
 				int minC = c, minR = r, maxC = c, maxR = r;
 				sta.push(make_pair(r, c));
 				used[r][c] = true;
-				tmpPoint.push_back(make_pair(r,c));
+				tmpPoint.push_back(make_pair(r, c));
 				while (!sta.empty())
 				{
 					int tmpR = sta.top().first, tmpC = sta.top().second;
@@ -192,7 +193,7 @@ void find_adjacent()
 				}
 				if (isStore(minC, minR, maxC, maxR))
 				{
-					Data d = Data(minR, minC, maxR, maxC,cnt_circle++);
+					Data d = Data(minR, minC, maxR, maxC, cnt_circle++);
 					d.Points = tmpPoint;
 					result.push_back(d);
 					tmpPoint.clear();
@@ -244,9 +245,9 @@ void get_circle()
 	//cout << d2.order << endl;
 	/*for (int i = 0; i < 2; i++)
 	{
-		Point center(make_circle[i].centerC, make_circle[i].centerR);
-		int radius = make_circle[i].length / 2;
-		circle(src, center, radius, Scalar(0, 0, 255), 2, 8, 0);
+	Point center(make_circle[i].centerC, make_circle[i].centerR);
+	int radius = make_circle[i].length / 2;
+	circle(src, center, radius, Scalar(0, 0, 255), 2, 8, 0);
 	}*/
 
 	//if (abs(d1.length - d2.length) > 2) cout << "灯孔大小不一致" << endl;
@@ -268,7 +269,7 @@ void get_circle()
 	waitKey(0);
 }
 
-void fit_circle( int k ) //最小二乘法来拟合圆
+void fit_circle(int k) //最小二乘法来拟合圆
 {
 	double X1 = 0;
 	double Y1 = 0;
@@ -310,35 +311,36 @@ void fit_circle( int k ) //最小二乘法来拟合圆
 	B = b / (-2);
 	R = sqrt(a*a + b*b - 4 * c) / 2;
 
-	Point center(A ,B);
-	circle(src, center, R, Scalar(0, 0,255), 2, 8, 0);
-	imwrite(dst_name,src);
+	Point center(A, B);
+	circle(src, center, R, Scalar(0, 0, 255), 2, 8, 0);
+	imwrite(dst_name, src);
 	double devi = get_devi(A, B, R, k);
+	devi /= N;
 	if (k == 0)
 	{
-		printf("灯孔1R:%.2lf",R * rate);
-		printf("偏差值:%.2lf\n",devi);
+		printf("灯孔1R:%.2lf", R * rate);
+		printf("  偏差值:%.0lf\n", devi);
 		dia1 += R;
 		all_devi1 += devi;
 	}
 	if (k == 1)
 	{
-		printf("灯孔2R:%.2lf",R  * rate );
-		printf("偏差值:%.2lf\n", devi);
+		printf("灯孔2R:%.2lf", R  * rate);
+		printf("  偏差值:%.0lf\n", devi);
 		dia2 += R;
 		all_devi2 += devi;
 	}
 	if (k == 2)
 	{
-		printf("灯柱R:%.2lf",R * rate);
-		printf("偏差值:%.2lf\n", devi);
+		printf("灯柱R:%.2lf", R * rate);
+		printf("  偏差值:%.0lf\n", devi);
 		dia3 += R;
 		all_devi3 += devi;
 	}
 	if (k == 3)
 	{
-		printf("外圈R:%.2lf",R * rate );
-		printf("偏差值:%.2lf\n", devi);
+		printf("外圈R:%.2lf", R * rate);
+		printf("  偏差值:%.0lf\n", devi);
 		dia4 += R;
 		all_devi4 += devi;
 	}
@@ -348,7 +350,7 @@ void draw_circle()
 {
 	for (int i = 0; i < result.size(); i++)
 	{
-		fit_circle( i );
+		fit_circle(i);
 	}
 	//imshow("window", src);
 	waitKey(0);
@@ -356,13 +358,13 @@ void draw_circle()
 
 double get_devi(double X, double Y, double R, int k)
 {
-	double res = 0,R2 = pow(R,2);
+	double res = 0, R2 = pow(R, 2);
 	for (int i = 0; i < result[k].Points.size(); i++)
 	{
 		double x = result[k].Points[i].second;
 		double y = result[k].Points[i].first;
-		double d2 = pow(x - X,2) + pow(y - Y,2);
-		res += pow(d2 - R2,2);
+		double d2 = pow(x - X, 2) + pow(y - Y, 2);
+		res += pow(d2 - R2, 2);
 	}
 	return res;
 }
